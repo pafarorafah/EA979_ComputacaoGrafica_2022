@@ -21,7 +21,8 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 > * Etapa 5 (finalizar): Ter os algoritmos em mãos e compará-los. Analisar quando é vantajoso usar um ou outro. Escrever o relatório final.
   
 ### Referências Bibliográficas
--
+> http://www.dpi.inpe.br/~carlos/Academicos/Cursos/Pdi/SemPerdas.htm
+> http://computacaografica.ic.uff.br/transparenciasvol2cap8.pdf
   
   
   
