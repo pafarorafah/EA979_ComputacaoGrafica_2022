@@ -1,0 +1,1 @@
+Diretório onde ficaram guardadas por exemplo as imagens que deverão ser processadas.

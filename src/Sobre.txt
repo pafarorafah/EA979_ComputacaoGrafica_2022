@@ -1,0 +1,1 @@
+Esse diretório será responsável por armazenar os códigos implementados em python.

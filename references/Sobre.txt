@@ -1,0 +1,1 @@
+Diretório responsável por armazenar as referências utilizadas para o desenvolvimento do projeto.
