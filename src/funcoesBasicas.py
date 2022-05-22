@@ -25,7 +25,6 @@ def gerarMatrizDCT(N,Pixel):
     return DCT
 
 
-
 #Utiliza os coeficientes
 def gerarMatrizCoeficentesDCT(N):
     DCT = []
@@ -53,17 +52,6 @@ def converterParaYCbCr(Imagem):
         for j in range(len(Imagem[0])):
             novaImagem[i][j] = Imagem[i][j] - 128
     return novaImagem
-
-
-#Nao utilizarrrrr
-def gerarMatrizQuantizacao(fator):
-    Q = []
-    for i in range(8):
-        Q.append(np.zeros(8))
-    for i in range(8):
-        for j in range(8):
-            Q[i][j] = 1 + (1+i+j)*fator
-    return Q
 
 def gerarMatrizQuantizacao2(fator):
     Q = [
@@ -101,28 +89,6 @@ def DivideByQuantizationMatrix(D,Q):
     return C
 
 
-M = [
-	[26,-5,-5,-5,-5,-5,-5,8],
-	[64,52,8,26,26,26,8,-18],
-	[126,70,26,26,52,26,-5,-5],
-	[111,52,8,52,52,38,-5,-5],
-	[52,26,8,38,38,21,8,8],
-	[0,8,-5,8,26,52,70,26],
-	[-5,-23,-18,21,8,8,52,38],
-	[-18,8,-5,-5,-5,8,26,8]
-]
-
-DctMatrix = gerarMatrizCoeficentesDCT(8)
-DctMatrixInverse = np.linalg.inv(DctMatrix)
-
-outTemp = np.matmul(DctMatrix,M)
-
-out = np.matmul(outTemp,DctMatrixInverse)
-
-quantization = gerarMatrizQuantizacao2(50)
 
 
-outFinal = DivideByQuantizationMatrix(out,quantization)
 
-for linha in outFinal:
-    print(linha)
