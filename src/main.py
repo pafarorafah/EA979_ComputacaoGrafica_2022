@@ -1,10 +1,11 @@
 from PIL import Image
 import numpy as np
-from funcoesBasicas import gerarMatrizDCT, verCoef, converterParaYCbCr, openImage, \
+from funcoesBasicas import converterParaYCbCr, openImage, \
     gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix
 
-openImage('./data/images/bike.png')
+img = openImage('./data/images/bike.png')
 
+print(img.shape)
 
 M = [
 	[26,-5,-5,-5,-5,-5,-5,8],

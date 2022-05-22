@@ -2,28 +2,14 @@ import math
 from PIL import Image
 import numpy as np
 
+def convertNumpy(img):
+    array = np.array(img)
+    return array
 
 def openImage(path):
     img = Image.open(path)
     Image._show(img)
-    return 1
-
-#Nao utilizar(Com erro)
-def gerarMatrizDCT(N,Pixel):
-    DCT = []
-    for h in range(N):
-        DCTline = np.zeros(N)
-        DCT.append(DCTline)
-    for i in range(N):
-        for j in range(N):
-            temp = 0.0
-            for x in range(N) :
-                for y in range(N) :
-                    temp += math.cos((2*x + 1)*i*math.pi/(2*N)) * math.cos((2*y + 1)*j*math.pi/(2*N)) * Pixel[x][y]
-            temp *= math.sqrt(2 * N) * verCoef(i)*verCoef(j)
-            DCT[i][j] = int(temp)
-    return DCT
-
+    return convertNumpy(img)
 
 #Utiliza os coeficientes
 def gerarMatrizCoeficentesDCT(N):
@@ -38,13 +24,6 @@ def gerarMatrizCoeficentesDCT(N):
             else:
                 DCT[x][y] = math.sqrt(2/N) * math.cos((2*y+1)*x*math.pi/(2*N))
     return DCT
-
-
-def verCoef(x):
-    if x == 0:
-        return 1/math.sqrt(2)
-    return 1
-
 
 def converterParaYCbCr(Imagem):
     novaImagem = Imagem.copy()
@@ -70,7 +49,7 @@ def gerarMatrizQuantizacao2(fator):
                 Q[i][j] = round(Q[i][j] * (100 - fator)/50)
                 if(Q[i][j] > 255):
                     Q[i][j] = 255
-    else:
+    elif(fator < 50):
         for i in range(8):
             for j in range(8):
                 Q[i][j] = round(Q[i][j] * 50/fator)
