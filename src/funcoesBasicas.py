@@ -1,5 +1,11 @@
 import math
+from PIL import Image
 import numpy as np
+
+def openImage(path):
+    img = Image.open(path)
+    Image._show(img)
+    return 1
 
 def gerarMatrizDCT(N,Pixel):
     DCT = []
