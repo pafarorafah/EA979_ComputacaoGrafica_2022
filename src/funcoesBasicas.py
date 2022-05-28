@@ -77,6 +77,7 @@ def reshapeImage(ImagemArray):
 def calculateOutMatrix(ImagemArray,fator):
     newImagemArray = ImagemArray.copy()
     newImagemArray = converterParaYCbCr(newImagemArray)
+    newImagemArray = reshapeImage(newImagemArray)
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = gerarMatrizQuantizacao2(fator)
     for i in range(0,newImagemArray.shape[0]-1, 8):
@@ -89,4 +90,25 @@ def calculateOutMatrix(ImagemArray,fator):
     return newImagemArray
 
 
+def gerarMatrizR(Q,C):
+    R = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            R[i][j] = Q[i][j] * C[i][j]
+    return R
 
+def decompressImage(ImagemArray,fator):
+    newImageArray = ImagemArray.copy()
+    newImageArray = reshapeImage(newImageArray)
+    DCTMatrix = gerarMatrizCoeficentesDCT(8)
+    quantization = gerarMatrizQuantizacao2(fator)
+    for i in range(0,newImageArray.shape[0]-1,8):
+        for j in range(0,newImageArray.shape[1]-1,8):
+            data = newImageArray[i:i+8,j:j+8]
+            matrizR = gerarMatrizR(quantization,data)
+            out1 = np.matmul(np.linalg.inv(DCTMatrix),matrizR)
+            out2 = np.matmul(out1,DCTMatrix)
+            out3 = out2.round()
+            outFinal = out3 + 128
+            newImageArray[i:i+8,j:j+8] = outFinal
+    return newImageArray

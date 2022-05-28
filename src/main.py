@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 from funcoesBasicas import converterParaYCbCr, openImage, \
-    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix
+    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix,decompressImage
 
 #img = openImage('./data/images/bike.png')
 
@@ -46,3 +46,9 @@ outMatrix = calculateOutMatrix(np.array(M2),50)
 
 for linha in outMatrix:
     print(linha)
+
+decompressedImage = decompressImage(outMatrix,50)
+print("===================================================")
+
+for linha in decompressedImage:
+	print(linha)
