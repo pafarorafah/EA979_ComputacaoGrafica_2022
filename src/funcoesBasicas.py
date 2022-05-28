@@ -67,7 +67,26 @@ def DivideByQuantizationMatrix(D,Q):
             C[i][j] = round(D[i][j]/Q[i][j])
     return C
 
+def reshapeImage(ImagemArray): 
+    newImage = ImagemArray.copy()
+    row,cols = newImage.shape
+    newRows = int(row/8) * 8
+    newCols = int(cols/8) * 8
+    return newImage.reshape((newRows,newCols))
 
+def calculateOutMatrix(ImagemArray,fator):
+    newImagemArray = ImagemArray.copy()
+    newImagemArray = converterParaYCbCr(newImagemArray)
+    DCTMatrix = gerarMatrizCoeficentesDCT(8)
+    quantization = gerarMatrizQuantizacao2(fator)
+    for i in range(0,newImagemArray.shape[0]-1, 8):
+        for j in range(0, newImagemArray.shape[1]-1,8):
+            data = newImagemArray[i:i+8,j:j+8]
+            out1 = np.matmul(DCTMatrix,data)
+            out2 = np.matmul(out1, np.linalg.inv(DCTMatrix))
+            dataOut = DivideByQuantizationMatrix(out2,quantization)
+            newImagemArray[i:i+8,j:j+8] = dataOut
+    return newImagemArray
 
 
 

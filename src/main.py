@@ -1,11 +1,23 @@
 from PIL import Image
 import numpy as np
 from funcoesBasicas import converterParaYCbCr, openImage, \
-    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix
+    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix
 
-img = openImage('./data/images/bike.png')
+#img = openImage('./data/images/bike.png')
 
-print(img.shape)
+#print(img.shape)
+
+
+M2 = [
+	[154,123,123,123,123,123,123,136],
+	[192,180,136,154,154,154,135,110],
+	[254,198,154,154,180,154,123,123],
+	[239,180,136,180,180,166,123,123],
+	[180,154,136,167,166,149,136,136],
+	[128,136,123,136,154,180,198,154],
+	[123,105,110,149,136,136,180,166],
+	[110,136,123,123,123,136,154,136]
+]
 
 M = [
 	[26,-5,-5,-5,-5,-5,-5,8],
@@ -29,5 +41,8 @@ quantization = gerarMatrizQuantizacao2(50)
 
 outFinal = DivideByQuantizationMatrix(out,quantization)
 
-for linha in outFinal:
+
+outMatrix = calculateOutMatrix(np.array(M2),50)
+
+for linha in outMatrix:
     print(linha)
