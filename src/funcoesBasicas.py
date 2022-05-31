@@ -67,7 +67,48 @@ def DivideByQuantizationMatrix(D,Q):
             C[i][j] = round(D[i][j]/Q[i][j])
     return C
 
+def reshapeImage(ImagemArray): 
+    newImage = ImagemArray.copy()
+    row,cols = newImage.shape
+    newRows = int(row/8) * 8
+    newCols = int(cols/8) * 8
+    return newImage.reshape((newRows,newCols))
+
+def calculateOutMatrix(ImagemArray,fator):
+    newImagemArray = ImagemArray.copy()
+    newImagemArray = converterParaYCbCr(newImagemArray)
+    newImagemArray = reshapeImage(newImagemArray)
+    DCTMatrix = gerarMatrizCoeficentesDCT(8)
+    quantization = gerarMatrizQuantizacao2(fator)
+    for i in range(0,newImagemArray.shape[0]-1, 8):
+        for j in range(0, newImagemArray.shape[1]-1,8):
+            data = newImagemArray[i:i+8,j:j+8]
+            out1 = np.matmul(DCTMatrix,data)
+            out2 = np.matmul(out1, np.linalg.inv(DCTMatrix))
+            dataOut = DivideByQuantizationMatrix(out2,quantization)
+            newImagemArray[i:i+8,j:j+8] = dataOut
+    return newImagemArray
 
 
+def gerarMatrizR(Q,C):
+    R = np.zeros((8,8))
+    for i in range(8):
+        for j in range(8):
+            R[i][j] = Q[i][j] * C[i][j]
+    return R
 
-
+def decompressImage(ImagemArray,fator):
+    newImageArray = ImagemArray.copy()
+    newImageArray = reshapeImage(newImageArray)
+    DCTMatrix = gerarMatrizCoeficentesDCT(8)
+    quantization = gerarMatrizQuantizacao2(fator)
+    for i in range(0,newImageArray.shape[0]-1,8):
+        for j in range(0,newImageArray.shape[1]-1,8):
+            data = newImageArray[i:i+8,j:j+8]
+            matrizR = gerarMatrizR(quantization,data)
+            out1 = np.matmul(np.linalg.inv(DCTMatrix),matrizR)
+            out2 = np.matmul(out1,DCTMatrix)
+            out3 = out2.round()
+            outFinal = out3 + 128
+            newImageArray[i:i+8,j:j+8] = outFinal
+    return newImageArray
