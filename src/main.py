@@ -1,9 +1,12 @@
 from PIL import Image
 import numpy as np
+from io import BytesIO
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 from funcoesBasicas import converterParaYCbCr, openImage, \
-    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix,decompressImage
+    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix,decompressImage, losslessDCT, decompressLosslessDCT
 
-#img = openImage('./data/images/bike.png')
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste.jpg')
 
 #print(img.shape)
 
@@ -29,7 +32,7 @@ M = [
 	[-5,-23,-18,21,8,8,52,38],
 	[-18,8,-5,-5,-5,8,26,8]
 ]
-
+'''
 DctMatrix = gerarMatrizCoeficentesDCT(8)
 DctMatrixInverse = np.linalg.inv(DctMatrix)
 
@@ -42,13 +45,42 @@ quantization = gerarMatrizQuantizacao2(50)
 outFinal = DivideByQuantizationMatrix(out,quantization)
 
 
-outMatrix = calculateOutMatrix(np.array(M2),50)
+'''
+outMatrix = calculateOutMatrix(np.array(img),90)
 
-for linha in outMatrix:
-    print(linha)
+#print("Compressed using lossy")
 
-decompressedImage = decompressImage(outMatrix,50)
+#for linha in outMatrix:
+#    print(linha)
+
+decompressedImage = decompressImage(outMatrix,90)
+#print("===================================================")
+
+print("Lossy image decompressed")
+imdecompressed = Image.fromarray(decompressedImage.astype(np.uint8))
+imdecompressed.show()
+
+
+#img_file = BytesIO()
+#imdecompressed.save(img_file, 'jpeg')
+#img_file_size_jpeg = img_file.tell()
+#print(f'size = {img_file_size_jpeg}')
+
+#print("===================================================")
+#print("Compressed using lossless")
+compressedImage = losslessDCT(np.asarray(img))
+#for linha in compressedImage:
+#	print(linha)
+
+decompressedImageLossless = decompressLosslessDCT(compressedImage)
 print("===================================================")
+print("Decompressed lossless")
+imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
+imdecompressedLossless.show()
+#img_file2 = BytesIO()
+#imdecompressedLossless.save(img_file2, 'jpeg')
+#img_file_size_jpeg2 = img_file2.tell()
+#print(f'size = {img_file_size_jpeg2}')
+#for linha in decompressedImageLossless:
+#	print(linha)
 
-for linha in decompressedImage:
-	print(linha)
