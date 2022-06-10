@@ -4,7 +4,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from funcoesBasicas import converterParaYCbCr, openImage, \
-    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix,decompressImage, losslessDCT, decompressLosslessDCT
+    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, reshapeImage, calculateOutMatrix,decompressImage, losslessDCT, decompressLosslessDCT
 
 img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste.jpg')
 
@@ -46,14 +46,14 @@ outFinal = DivideByQuantizationMatrix(out,quantization)
 
 
 '''
-outMatrix = calculateOutMatrix(np.array(img),90)
+outMatrix = calculateOutMatrix(np.array(img),50)
 
 #print("Compressed using lossy")
 
 #for linha in outMatrix:
 #    print(linha)
 
-decompressedImage = decompressImage(outMatrix,90)
+decompressedImage = decompressImage(outMatrix,50)
 #print("===================================================")
 
 print("Lossy image decompressed")
