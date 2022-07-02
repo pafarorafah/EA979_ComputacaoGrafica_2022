@@ -13,7 +13,7 @@ def convertNumpy(img):
 
 def openImage(path):
     img = Image.open(path)
-    Image._show(img)
+    #Image._show(img)
     return convertNumpy(img)
 
 #Utiliza os coeficientes
@@ -30,10 +30,10 @@ def gerarMatrizCoeficentesDCT(N):
                 DCT[x][y] = math.sqrt(2/N) * math.cos((2*y+1)*x*math.pi/(2*N))
     return DCT
 
-def converterParaYCbCr(Imagem):
+def FixImageRange(Imagem):
     novaImagem = Imagem.copy().astype(int)
-    for i in range(novaImagem.shape[2]):
-        novaImagem[:,:,i] = novaImagem[:,:,i] - 128
+    for i in range(1):
+        novaImagem[:,:] = novaImagem[:,:] - 128
     return novaImagem
 
 def gerarMatrizQuantizacao2(fator):
@@ -58,13 +58,12 @@ def gerarMatrizQuantizacao2(fator):
 
 def reshapeImage(ImagemArray): 
     newImage = ImagemArray.copy()
-    print(newImage.shape)
-    row,cols, depth= newImage.shape
-    print(f'Numero de linhas: {row}\nNumero de colunas: {cols}')
+    try:
+        newImage = newImage[:,:,0]
+    except:
+        newImage = newImage
     image = Image.fromarray(newImage.astype(np.uint8))
-    newRows = int(row/8) * 8
-    newCols = int(cols/8) * 8
-    image = image.resize((newCols,newRows),Image.ANTIALIAS)
+    image = image.resize((480,480),Image.ANTIALIAS)
     newArray = np.asarray(image)
     return newArray
 
@@ -80,19 +79,18 @@ def verifyPixelValue(Block):
 
 def calculateOutMatrix(ImagemArray,fator):
     newImagemArray = ImagemArray.copy()
-    newImagemArray = newImagemArray.astype(float)
-    newImagemArray = np.array(converterParaYCbCr(newImagemArray)).astype(float)
+    newImagemArray = np.array(FixImageRange(newImagemArray))
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = gerarMatrizQuantizacao2(fator)
-    for h in range(newImagemArray.shape[2]):
+    for h in range(1):
         for i in range(0,newImagemArray.shape[0], 8):
             for j in range(0, newImagemArray.shape[1],8):
-                data = newImagemArray[i:i+8,j:j+8,h]
+                data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(DCTMatrix,data)
                 out2 = np.matmul(out1, np.transpose(DCTMatrix))
                 dataOut = np.divide(out2,quantization).round()
-                newImagemArray[i:i+8,j:j+8,h] = dataOut
-    return newImagemArray
+                newImagemArray[i:i+8,j:j+8] = dataOut
+    return newImagemArray[:,:]
 
 def losslessQuantization():
     '''
@@ -120,33 +118,33 @@ def decompressImage(ImagemArray,fator):
     newImageArray = ImagemArray.copy()
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = gerarMatrizQuantizacao2(fator)
-    for h in range(newImageArray.shape[2]):
+    for h in range(1):
         for i in range(0,newImageArray.shape[0],8):
             for j in range(0,newImageArray.shape[1],8):
-                data = newImageArray[i:i+8,j:j+8,h]
+                data = newImageArray[i:i+8,j:j+8]
                 matrizR = np.multiply(quantization,data)
                 out1 = np.matmul(np.transpose(DCTMatrix),matrizR)
                 out2 = np.matmul(out1,DCTMatrix)
                 out3 = out2.round()
                 outFinal = out3 + 128
                 outFinal = verifyPixelValue(outFinal)
-                newImageArray[i:i+8,j:j+8,h] = outFinal
+                newImageArray[i:i+8,j:j+8] = outFinal
     return newImageArray
 
 def losslessDCT(ImagemArray):
     newImagemArray = ImagemArray.copy()
     newImagemArray = newImagemArray.astype(float)
-    newImagemArray = converterParaYCbCr(newImagemArray)
+    newImagemArray = FixImageRange(newImagemArray)
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = losslessQuantization()
-    for h in range(newImagemArray.shape[2]):
+    for h in range(1):
         for i in range(0,newImagemArray.shape[0],8):
             for j in range(0,newImagemArray.shape[1],8):
-                data = newImagemArray[i:i+8,j:j+8,h]
+                data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(DCTMatrix,data)
                 out2 = np.matmul(out1,np.transpose(DCTMatrix))
-                out3 = out2*quantization
-                newImagemArray[i:i+8,j:j+8,h] = out3
+                out3 = np.multiply(out2,quantization)
+                newImagemArray[i:i+8,j:j+8] = out3
     return newImagemArray
             
 
@@ -154,14 +152,14 @@ def decompressLosslessDCT(ImagemArray):
     newImagemArray = ImagemArray.copy()
     newImagemArray = newImagemArray.astype(float)
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
-    for h in range(newImagemArray.shape[2]):
+    for h in range(1):
         for i in range(0,newImagemArray.shape[0],8):
             for j in range(0,newImagemArray.shape[1],8):
-                data = newImagemArray[i:i+8,j:j+8,h]
+                data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(np.transpose(DCTMatrix),data)
-                out2 = np.matmul(out1,DCTMatrix) + 128
-                out2 = verifyPixelValue(out2) 
-                newImagemArray[i:i+8,j:j+8,h] = out2
+                out2 = np.matmul(out1,DCTMatrix)
+                out2 = verifyPixelValue(out2 + 128) 
+                newImagemArray[i:i+8,j:j+8] = out2
     return newImagemArray
 
 

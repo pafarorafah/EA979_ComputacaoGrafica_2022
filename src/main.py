@@ -3,14 +3,14 @@ import numpy as np
 from io import BytesIO
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-from funcoesBasicas import converterParaYCbCr, openImage, \
+from funcoesBasicas import FixImageRange, openImage, \
     gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, reshapeImage, calculateOutMatrix,decompressImage, losslessDCT, decompressLosslessDCT
 
 import os
  
 
 
-img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste7.jpg')
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.jpg')
 
 #print(img.shape)
 
@@ -37,7 +37,23 @@ M = [
 	[-18,8,-5,-5,-5,8,26,8]
 ]
 
+exampleImage = [
+	[52,55,61,66,70,61,64,73],
+	[63,59,66,90,109,85,69,72],
+	[62,59,68,113,144,104,66,73],
+	[63,58,71,122,154,106,70,69],
+	[67,61,68,104,126,88,68,70],
+	[79,65,60,70,77,68,58,75],
+	[85,71,64,59,55,61,65,83],
+	[87,79,69,68,65,76,78,94]
+]
+
+
+
 newImage = reshapeImage(np.array(img))
+newImage2 = Image.fromarray(newImage)
+newImage2.show()
+newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.png')
 
 outMatrix = calculateOutMatrix(newImage,50)
 
@@ -65,11 +81,12 @@ print("===================================================")
 print("Decompressed lossless")
 imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
 imdecompressedLossless.show()
-#img_file2 = BytesIO()
-#imdecompressedLossless.save(img_file2, 'jpeg')
-#img_file_size_jpeg2 = img_file2.tell()
-#print(f'size = {img_file_size_jpeg2}')
 
+shapeImage1 = decompressedImage.shape
+print(decompressedImage[shapeImage1[0]-9:shapeImage1[0]-1,shapeImage1[1]-9:shapeImage1[1]-1])
+
+shapeImage1 = decompressedImage.shape
+print(newImage[shapeImage1[0]-9:shapeImage1[0]-1,shapeImage1[1]-9:shapeImage1[1]-1])
 
 difference1 = abs(newImage - decompressedImage)
 difference2 = abs(newImage - decompressedImageLossless)
@@ -88,15 +105,12 @@ sumOfPixels2 = np.sum(thresholdImage2)
 print(f'Diferença entre imagem original e DCT: {sumOfPixels1} \nDiferença entre imagem original e Lossless DCT: {sumOfPixels2}')
 
 
-imdecompressed.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7.jpg')
-imdecompressedLossless.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7Lossless.jpg')
+imdecompressed.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Fator50.png')
+imdecompressedLossless.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Lossless.png')
 
-#imSalva1 = Image.open(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7.jpg')
-#imSalva2 = Image.open(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7Lossless.jpg')
-
-file_size0 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste7.jpg')
-file_size1 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7.jpg')
-file_size2 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste7Lossless.jpg')
+file_size0 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.png')
+file_size1 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Fator50.png')
+file_size2 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Lossless.png')
 
 print("File Size Not Compressed is :", file_size0, "bytes")
 print("File Size Compressed is :", file_size1, "bytes")
