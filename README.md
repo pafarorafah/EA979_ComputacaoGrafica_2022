@@ -11,17 +11,42 @@ O presente projeto foi originado no contexto das atividades da disciplina de pó
 > | Nathan Batista   | 222852  | Eng. de Computação|
 
 ### Descrição do Projeto 
-> O objetivo do projeto será estudar e implementar Algoritmos de Compressão de Imagem **com** e **sem** perda de informação e compará-los.
->  - A primeira etapa será reproduzir um código baseado em DCT (Discrete Cosine Transform) lossy.
-> - Na segunda etapa iremos implementar o LDCT(Lossless Discrete Cosine Transform) reaproveitando o código escrito para DCT. 
-  
-### DCT
+> O Objetivo do projeto será estudar e implementar um algoritmo de compressão de imagem baseado no método JPEG. 
+A compressão JPEG é baseada no algoritmo DCT (Discrete Cosine Transform), que por sua vez é uma “simplificação” do DFT (Discrete Fourier Transform) e comumente apresenta uma certa perda de qualidade ao recuperar a imagem comprimida.
+> Neste projeto, implementamos duas variações do JPEG:
 
- > Foi proposto por Nasir Ahmed em 1972. É uma transformação similar à DFT (Discrete Fourier Transform) usando apenas números reais.
+  > Lossy: Método de compressão mais usado, apresenta uma redução na qualidade da imagem porém o tamanho do arquivo é significativamente reduzido.
+  
+  > Lossless: Método de compressão em que a imagem é reconstruída sem perdas (ou com perdas muito pequenas).
+
+  
+### JPEG
+
+ > JPEG (ou JPG) é um acrónimo para Joint Photographic Experts Group, grupo esse que criou a marca em 1992. É um método de compressão que possibilita um "trade off"  ajustável entre qualidade de imagem e espaço de armazenamento. 
  
- > Uma técnica amplamente usada em Processamento de Sinais e Compressão de Imagem, principalmente imagens digitais (implementada em JPEG e HEIF).
+ > Essa “perda” de qualidade é calculada, e ocorre nas componentes em que a visão humana peca (luminância e crominância), por isso que caso a imagem seja RGB ela primeiramente é convertida para YCbCr ou YUV.
   
  > Pode ser usada tanto para compressão com perda quanto sem perda. Para compressão com perda utilizaremos o DCT e uma matriz de quantização para remover as altas frequências do sinal (pouco perceptíveis aos olhos humanos), depois usaremos a entropia para recuperar a imagem. Já no método sem perda utilizaremos também uma modularização delta para explorar correlações entre blocos vizinhos da imagem.
+  
+>  O algoritmo é baseado na técnica Discrete Cosine Transform, proposta por Nasir Ahmed em 1972. Até os dias de hoje, JPEG é o método de compressão mais utilizado para imagens digitais.
+  
+### DCT
+  
+> DCT é baseado em DFT (Discrete Fourier Transform) com a única diferença que a parte imaginária é excluída já que estamos trabalhando com sinais reais.
+  
+ Fórmula da DCT em 1D (Equação 1):
+  $$F(i) = {1  \over \sqrt{2N}} C(i) \sum_{x=0}^{N-1} f(x)cos({(2x + 1)i \pi \over 2 N}) $$
+ 
+ - Se u = 0, $\ C(u) = {1  \over \sqrt{2N}}  $
+ - Se u > 0, $\ C(u) = 1  $
+  
+ Fórmula da DCT em 2D (Equação 2):
+  $$F(i,j) = {1  \over \sqrt{2N}} C(i)C(j) \sum_{x=0}^{N-1} \sum_{y=0}^{N-1} f(x,y)cos({(2x + 1)i \pi \over 2 N})cos({(2y + 1)j \pi \over 2 N}) $$
+ 
+ - Se u = 0, $\ C(u) = {1  \over \sqrt{2N}}  $
+ - Se u > 0, $\ C(u) = 1  $
+  
+  
   
 ### Plano de Trabalho
 > * Etapa 1 (2 semanas): Estudo da técnica DCT com perda. 
