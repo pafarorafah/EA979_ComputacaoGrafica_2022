@@ -1,13 +1,17 @@
 from PIL import Image
 import numpy as np
-from funcoesBasicas import converterParaYCbCr, openImage, \
-    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, DivideByQuantizationMatrix, reshapeImage, calculateOutMatrix,decompressImage
+from io import BytesIO
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from funcoesBasicas import FixImageRange, openImage, \
+    gerarMatrizCoeficentesDCT, gerarMatrizQuantizacao2, reshapeImage, calculateOutMatrix,decompressImage, losslessDCT, decompressLosslessDCT
 
-#img = openImage('./data/images/bike.png')
+import os
+ 
+ #Abro a imagem
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste10.png')
 
-#print(img.shape)
-
-
+#Matriz de teste 1
 M2 = [
 	[154,123,123,123,123,123,123,136],
 	[192,180,136,154,154,154,135,110],
@@ -19,6 +23,7 @@ M2 = [
 	[110,136,123,123,123,136,154,136]
 ]
 
+#Matriz de teste 2
 M = [
 	[26,-5,-5,-5,-5,-5,-5,8],
 	[64,52,8,26,26,26,8,-18],
@@ -30,25 +35,85 @@ M = [
 	[-18,8,-5,-5,-5,8,26,8]
 ]
 
-DctMatrix = gerarMatrizCoeficentesDCT(8)
-DctMatrixInverse = np.linalg.inv(DctMatrix)
+#Matriz de teste 3
+exampleImage = [
+	[52,55,61,66,70,61,64,73],
+	[63,59,66,90,109,85,69,72],
+	[62,59,68,113,144,104,66,73],
+	[63,58,71,122,154,106,70,69],
+	[67,61,68,104,126,88,68,70],
+	[79,65,60,70,77,68,58,75],
+	[85,71,64,59,55,61,65,83],
+	[87,79,69,68,65,76,78,94]
+]
 
-outTemp = np.matmul(DctMatrix,M)
+#Reshape na imagem para multiplo de 8x8
+newImage = reshapeImage(np.array(img))
+newImage2 = Image.fromarray(newImage)
+#Salvo imagem e a mostro na tela para comparação
+newImage2.show()
+newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste10.png')
+#newImage = np.array(exampleImage)
 
-out = np.matmul(outTemp,DctMatrixInverse)
+#Calculo compressão DCT
+outMatrix = calculateOutMatrix(newImage,50)
 
-quantization = gerarMatrizQuantizacao2(50)
+print("Compressed using lossy")
 
-outFinal = DivideByQuantizationMatrix(out,quantization)
-
-
-outMatrix = calculateOutMatrix(np.array(M2),50)
-
-for linha in outMatrix:
-    print(linha)
-
+#Descomprimo imagem DCT
 decompressedImage = decompressImage(outMatrix,50)
 print("===================================================")
 
-for linha in decompressedImage:
-	print(linha)
+#Exibo imagem descomprimida
+print("Lossy image decompressed")
+imdecompressed = Image.fromarray(decompressedImage.astype(np.uint8))
+imdecompressed.show()
+
+#Comprimo usando lossless DCT
+print("===================================================")
+print("Compressed using lossless")
+compressedImage = losslessDCT(newImage)
+
+
+#Descomrimo usando Lossless DCT
+decompressedImageLossless = decompressLosslessDCT(compressedImage)
+print("===================================================")
+print("Decompressed lossless")
+#Crio Imagem usando Pil e mostro na tela
+imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
+imdecompressedLossless.show()
+
+#Verifico tamanho em bytes das imagens(DCT, LDCT e Original)
+img_file = BytesIO()
+imdecompressed.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
+
+img_file = BytesIO()
+imdecompressedLossless.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
+
+img_file = BytesIO()
+newImage3 = Image.fromarray(newImage)
+newImage3.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
+
+#Obtenho imagens da diferença e as exibo para ver quais pontos ficaram diferentes
+difference1 = abs(newImage - decompressedImage)
+difference2 = abs(newImage - decompressedImageLossless)
+imDifference1 = Image.fromarray(difference1.astype(np.uint8))
+imDifference1.show()
+
+imDifference2 = Image.fromarray(difference2.astype(np.uint8))
+imDifference2.show()
+
+#Faço uma somatoria dos pontos onde a diferença foi maior que 10 nos valores de pixel para saber o quanto diferimos da imagem original
+thresholdImage1 = difference1 > 10
+thresholdImage2 = difference2 > 10
+
+sumOfPixels1 = np.sum(thresholdImage1)
+sumOfPixels2 = np.sum(thresholdImage2)
+
+print(f'Diferença entre imagem original e DCT: {sumOfPixels1} \nDiferença entre imagem original e Lossless DCT: {sumOfPixels2}')
