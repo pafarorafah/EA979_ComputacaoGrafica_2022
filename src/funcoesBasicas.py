@@ -5,18 +5,21 @@ import numpy as np
 
 mode_to_bpp = {'1':1, 'L':8, 'P':8, 'RGB':24, 'RGBA':32, 'CMYK':32, 'YCbCr':24, 'I':32, 'F':32}
 
+
+#Exibo o modo da imagem e a converto para Numpy
 def convertNumpy(img):
     bpp = mode_to_bpp[img.mode]
     print(bpp)
     array = np.array(img)
     return array
 
+#Abro a imagem dado o path do arquivo
 def openImage(path):
     img = Image.open(path)
     #Image._show(img)
     return convertNumpy(img)
 
-#Utiliza os coeficientes
+#Gera os coeficientes DCT conforme fórmula apresentada no relatório
 def gerarMatrizCoeficentesDCT(N):
     DCT = []
     for h in range(N):
@@ -30,12 +33,15 @@ def gerarMatrizCoeficentesDCT(N):
                 DCT[x][y] = math.sqrt(2/N) * math.cos((2*y+1)*x*math.pi/(2*N))
     return DCT
 
+#Transformo a imagem para -128...127 em vez de 0...255
 def FixImageRange(Imagem):
     novaImagem = Imagem.copy().astype(int)
     for i in range(1):
         novaImagem[:,:] = novaImagem[:,:] - 128
     return novaImagem
 
+
+#Gero a matriz de quantização baseada no fator de qualidade passado
 def gerarMatrizQuantizacao2(fator):
     Q = [
         [16,11,10,16,24,40,51,61],
@@ -56,6 +62,8 @@ def gerarMatrizQuantizacao2(fator):
         Q = Q * 50.0/fator
     return Q.astype(np.uint8)
 
+
+#Dou reshape na imagem para 480x480 para que seja possível aplicar blocos múltiplos de 8
 def reshapeImage(ImagemArray): 
     newImage = ImagemArray.copy()
     try:
@@ -67,6 +75,8 @@ def reshapeImage(ImagemArray):
     newArray = np.asarray(image)
     return newArray
 
+
+#Verifico se os valores de pixel são diferentes dos valores possíveis
 def verifyPixelValue(Block):
     newBlock = Block.copy()
     for i in range(len(newBlock)):
@@ -77,17 +87,21 @@ def verifyPixelValue(Block):
                 newBlock[i,j] = 0
     return newBlock
 
+#Realizo o calculo da transformada DCT
 def calculateOutMatrix(ImagemArray,fator):
     newImagemArray = ImagemArray.copy()
+    #Passo a imagem para o range -128...127 e gero as matrizes DCT e de Quantização
     newImagemArray = np.array(FixImageRange(newImagemArray))
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = gerarMatrizQuantizacao2(fator)
     for h in range(1):
         for i in range(0,newImagemArray.shape[0], 8):
             for j in range(0, newImagemArray.shape[1],8):
+                #Em blocos de 8x8 realizo o calculo saida = DCT * Imagem * DCT'
                 data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(DCTMatrix,data)
                 out2 = np.matmul(out1, np.transpose(DCTMatrix))
+                #Realizo o calculo da divisão pela matriz de quantização e arredondamento
                 dataOut = np.divide(out2,quantization).round()
                 newImagemArray[i:i+8,j:j+8] = dataOut
     return newImagemArray[:,:]
@@ -105,6 +119,8 @@ def losslessQuantization():
         [0,0,0,0,0,0,0,0]
     ]
     '''
+
+    #Mascara aplicada para quantização
     return [
         [1,1,1,1,1,1,1,1],
         [1,1,1,1,1,1,1,0],
@@ -119,33 +135,42 @@ def losslessQuantization():
 
 def decompressImage(ImagemArray,fator):
     newImageArray = ImagemArray.copy()
+    #Gero matriz DCT e matriz de quantização
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = gerarMatrizQuantizacao2(fator)
     for h in range(1):
         for i in range(0,newImageArray.shape[0],8):
             for j in range(0,newImageArray.shape[1],8):
                 data = newImageArray[i:i+8,j:j+8]
+                #Realizo o processo inverso ao de compressão, ou seja, em vez de dividir pela quantização eu realizo o produto entre eles
                 matrizR = np.multiply(quantization,data)
+                #Saida = DCT' * Imagem * DCT
                 out1 = np.matmul(np.transpose(DCTMatrix),matrizR)
                 out2 = np.matmul(out1,DCTMatrix)
+                #Arredondo o valor
                 out3 = out2.round()
+                #Transformo novamente para 0...255
                 outFinal = out3 + 128
+                #Realizo fix nos valores que ultrapassarem 255 ou forem menores que 0
                 outFinal = verifyPixelValue(outFinal)
                 newImageArray[i:i+8,j:j+8] = outFinal
     return newImageArray
 
 def losslessDCT(ImagemArray):
     newImagemArray = ImagemArray.copy()
+    #Transoformo matriz em ponto flutuante
     newImagemArray = newImagemArray.astype(float)
-    #newImagemArray = FixImageRange(newImagemArray)
+    #Gero matriz DCT e mascara de quantização
     DCTMatrix = gerarMatrizCoeficentesDCT(8)
     quantization = losslessQuantization()
     for h in range(1):
         for i in range(0,newImagemArray.shape[0],8):
             for j in range(0,newImagemArray.shape[1],8):
+                #Igual ao realizado na compressão DCT comum realizo DCT*Imagem*DCT'
                 data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(DCTMatrix,data)
                 out2 = np.matmul(out1,np.transpose(DCTMatrix))
+                #Realizo produto elemento a elemento com a mascara selecionada
                 out3 = np.multiply(out2,quantization)
                 newImagemArray[i:i+8,j:j+8] = out3
     return newImagemArray
@@ -158,6 +183,7 @@ def decompressLosslessDCT(ImagemArray):
     for h in range(1):
         for i in range(0,newImagemArray.shape[0],8):
             for j in range(0,newImagemArray.shape[1],8):
+                #Realizo DCT' * Imagem * DCT
                 data = newImagemArray[i:i+8,j:j+8]
                 out1 = np.matmul(np.transpose(DCTMatrix),data)
                 out2 = np.matmul(out1,DCTMatrix)

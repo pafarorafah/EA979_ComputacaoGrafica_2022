@@ -9,7 +9,7 @@ from funcoesBasicas import FixImageRange, openImage, \
 import os
  
  #Abro a imagem
-img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.png')
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste10.png')
 
 #Matriz de teste 1
 M2 = [
@@ -52,7 +52,7 @@ newImage = reshapeImage(np.array(img))
 newImage2 = Image.fromarray(newImage)
 #Salvo imagem e a mostro na tela para comparação
 newImage2.show()
-newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.png')
+newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste10.png')
 #newImage = np.array(exampleImage)
 
 #Calculo compressão DCT
@@ -63,7 +63,6 @@ print("Compressed using lossy")
 #Descomprimo imagem DCT
 decompressedImage = decompressImage(outMatrix,50)
 print("===================================================")
-print(decompressedImage)
 
 #Exibo imagem descomprimida
 print("Lossy image decompressed")
@@ -80,7 +79,6 @@ compressedImage = losslessDCT(newImage)
 decompressedImageLossless = decompressLosslessDCT(compressedImage)
 print("===================================================")
 print("Decompressed lossless")
-print(decompressedImageLossless.astype(np.uint8))
 #Crio Imagem usando Pil e mostro na tela
 imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
 imdecompressedLossless.show()
