@@ -79,8 +79,9 @@ A compressão JPEG é baseada no algoritmo DCT (Discrete Cosine Transform), que 
 			      [	.098   -.278    .416   -.490     .490     -.416    .278   -.098	]
   
   
-  
-  
+### Projeto:
+#### Compressão `Lossy`
+> Seguimos o diagrama de blocos do processo JPEG básico:
   
   
   
