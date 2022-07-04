@@ -188,14 +188,14 @@ O novo diagrama de blocos para o processo será:
 Essa nova matriz consistem em:
 	
 	mask = [
+	 [ 1   1   1   1    1    1    1    1 ]
+	 [ 1   1   1   1    1    1    1    0 ]
+	 [ 1   1   1   1    1    1    0    0 ]
+	 [ 1   1   1   1    1    0    0    0 ]
 	 [ 1   1   1   1    0    0    0    0 ]
 	 [ 1   1   1   0    0    0    0    0 ]
 	 [ 1   1   0   0    0    0    0    0 ]
-	 [ 1   0   0   0    0    0    0    0 ]
-	 [ 0   0   0   0    0    0    0    0 ]
-	 [ 0   0   0   0    0    0    0    0 ]
-	 [ 0   0   0   0    0    0    0    0 ]
-	 [ 0   0   0   0    0    0    0    0 ] ]
+	 [ 1   0   0   0    0    0    0    0 ] ]
 
 >Vemos aqui que as altas frequências continuam sendo zeradas, porém, as baixas frequências não foram divididas por nenhum parâmetro e apresentaram seu valor “verdadeiro”.
 
