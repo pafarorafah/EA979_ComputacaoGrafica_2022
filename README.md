@@ -34,26 +34,25 @@ A compressão JPEG é baseada no algoritmo DCT (Discrete Cosine Transform), que 
   
 > DCT é baseado em DFT (Discrete Fourier Transform) com a única diferença que a parte imaginária é excluída já que estamos trabalhando com sinais reais.
   
- Fórmula da DCT em 1D (Equação 1):
+ Fórmula DCT 1D (Equação 1):
   $$F(i) = {1  \over \sqrt{2N}} C(i) \sum_{x=0}^{N-1} f(x)cos({(2x + 1)i \pi \over 2 N}) $$
  
  - Se u = 0, $\ C(u) = {1  \over \sqrt{2N}}  $
  - Se u > 0, $\ C(u) = 1  $
   
- Fórmula da DCT em 2D (Equação 2):
+ Fórmula DCT 2D (Equação 2):
   $$F(i,j) = {1  \over \sqrt{2N}} C(i)C(j) \sum_{x=0}^{N-1} \sum_{y=0}^{N-1} f(x,y)cos({(2x + 1)i \pi \over 2 N})cos({(2y + 1)j \pi \over 2 N}) $$
  
  - Se u = 0, $\ C(u) = {1  \over \sqrt{2N}}  $
  - Se u > 0, $\ C(u) = 1  $
   
+  Fórmula DCT 2D inversa (Equação 3):
+   $$f(x,y) = {1  \over 2}  \sum_{x=0}^{N-1} \sum_{y=0}^{N-1} C(i)C(j) F(i,j) cos({(2x + 1)i \pi \over 2 N})cos({(2y + 1)j \pi \over 2 N}) $$
   
+  Pode ser simplificada como (Equação 4):
+   $$f(x,y) = \sum_{x=0}^{N-1} \sum_{y=0}^{N-1} F(i,j) P(i,j) $$
   
-### Plano de Trabalho
-> * Etapa 1 (2 semanas): Estudo da técnica DCT com perda. 
-> * Etapa 2 (3 semanas): Tentar Implementar um algoritmo inicial de compressão de imagem com perda utilizando DCT.
-> * Etapa 3 (2 semanas): Estudo de técnicas de compressão de imagem sem perda de informação(LDCT).
-> * Etapa 4 (3 semanas): Tentar implementar um algoritmo inicial de compressão de imagem sem perda(LDCT).
-> * Etapa 5 (finalizar): Ter os algoritmos em mãos e compará-los. Analisar quando é vantajoso usar um ou outro. Escrever o relatório final.
+> $P(i,j)$ são funções-base, ou primitivas, da DCT:
   
 ### Referências Bibliográficas
 > http://www.dpi.inpe.br/~carlos/Academicos/Cursos/Pdi/SemPerdas.htm
