@@ -8,13 +8,10 @@ from funcoesBasicas import FixImageRange, openImage, \
 
 import os
  
+ #Abro a imagem
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.png')
 
-
-img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.jpg')
-
-#print(img.shape)
-
-
+#Matriz de teste 1
 M2 = [
 	[154,123,123,123,123,123,123,136],
 	[192,180,136,154,154,154,135,110],
@@ -26,6 +23,7 @@ M2 = [
 	[110,136,123,123,123,136,154,136]
 ]
 
+#Matriz de teste 2
 M = [
 	[26,-5,-5,-5,-5,-5,-5,8],
 	[64,52,8,26,26,26,8,-18],
@@ -37,6 +35,7 @@ M = [
 	[-18,8,-5,-5,-5,8,26,8]
 ]
 
+#Matriz de teste 3
 exampleImage = [
 	[52,55,61,66,70,61,64,73],
 	[63,59,66,90,109,85,69,72],
@@ -48,46 +47,62 @@ exampleImage = [
 	[87,79,69,68,65,76,78,94]
 ]
 
-
-
+#Reshape na imagem para multiplo de 8x8
 newImage = reshapeImage(np.array(img))
 newImage2 = Image.fromarray(newImage)
+#Salvo imagem e a mostro na tela para comparação
 newImage2.show()
-newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.png')
+newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.png')
+#newImage = np.array(exampleImage)
 
+#Calculo compressão DCT
 outMatrix = calculateOutMatrix(newImage,50)
 
 print("Compressed using lossy")
 
+#Descomprimo imagem DCT
 decompressedImage = decompressImage(outMatrix,50)
 print("===================================================")
+print(decompressedImage)
 
+#Exibo imagem descomprimida
 print("Lossy image decompressed")
 imdecompressed = Image.fromarray(decompressedImage.astype(np.uint8))
 imdecompressed.show()
 
-
-#img_file = BytesIO()
-#imdecompressed.save(img_file, 'jpeg')
-#img_file_size_jpeg = img_file.tell()
-#print(f'size = {img_file_size_jpeg}')
-
+#Comprimo usando lossless DCT
 print("===================================================")
 print("Compressed using lossless")
 compressedImage = losslessDCT(newImage)
 
+
+#Descomrimo usando Lossless DCT
 decompressedImageLossless = decompressLosslessDCT(compressedImage)
 print("===================================================")
 print("Decompressed lossless")
+print(decompressedImageLossless.astype(np.uint8))
+#Crio Imagem usando Pil e mostro na tela
 imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
 imdecompressedLossless.show()
 
-shapeImage1 = decompressedImage.shape
-print(decompressedImage[shapeImage1[0]-9:shapeImage1[0]-1,shapeImage1[1]-9:shapeImage1[1]-1])
+#Verifico tamanho em bytes das imagens(DCT, LDCT e Original)
+img_file = BytesIO()
+imdecompressed.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
 
-shapeImage1 = decompressedImage.shape
-print(newImage[shapeImage1[0]-9:shapeImage1[0]-1,shapeImage1[1]-9:shapeImage1[1]-1])
+img_file = BytesIO()
+imdecompressedLossless.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
 
+img_file = BytesIO()
+newImage3 = Image.fromarray(newImage)
+newImage3.save(img_file, 'jpeg')
+img_file_size_jpeg = img_file.tell()
+print(f'size = {img_file_size_jpeg}')
+
+#Obtenho imagens da diferença e as exibo para ver quais pontos ficaram diferentes
 difference1 = abs(newImage - decompressedImage)
 difference2 = abs(newImage - decompressedImageLossless)
 imDifference1 = Image.fromarray(difference1.astype(np.uint8))
@@ -96,22 +111,11 @@ imDifference1.show()
 imDifference2 = Image.fromarray(difference2.astype(np.uint8))
 imDifference2.show()
 
-thresholdImage1 = difference1 > 30
-thresholdImage2 = difference2 > 30
+#Faço uma somatoria dos pontos onde a diferença foi maior que 10 nos valores de pixel para saber o quanto diferimos da imagem original
+thresholdImage1 = difference1 > 10
+thresholdImage2 = difference2 > 10
 
 sumOfPixels1 = np.sum(thresholdImage1)
 sumOfPixels2 = np.sum(thresholdImage2)
 
 print(f'Diferença entre imagem original e DCT: {sumOfPixels1} \nDiferença entre imagem original e Lossless DCT: {sumOfPixels2}')
-
-
-imdecompressed.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Fator50.png')
-imdecompressedLossless.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Lossless.png')
-
-file_size0 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste11.png')
-file_size1 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Fator50.png')
-file_size2 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemteste11Lossless.png')
-
-print("File Size Not Compressed is :", file_size0, "bytes")
-print("File Size Compressed is :", file_size1, "bytes")
-print("File Size Lossless Compressed is :", file_size2, "bytes")
