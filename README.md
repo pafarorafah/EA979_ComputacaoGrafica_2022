@@ -101,7 +101,7 @@ Exemplo usando uma imagem 8x8:
 	[85,71,64,59,55,61,65,83],
 	[87,79,69,68,65,76,78,94]  ]
 
-  > Vale ressaltar que como o projeto é feito usando somente imagens em preto e branco, não é necessária uma conversão dos formatos de cores. Ao usar imagens coloridas, seria teríamos um passo a mais para converter RGB em YCrCb ou em YUV, isso porque ambos os formatos descrevem cores usando luminância e crominância, essenciais para montar  matrizes de quantização eficientes.
+  > Vale ressaltar que como o projeto é feito usando somente imagens em preto e branco, não é necessária uma conversão dos formatos de cores. Ao usar imagens coloridas, teríamos um passo a mais para converter RGB em YCrCb ou em YUV, isso porque ambos os formatos descrevem cores usando luminância e crominância, essenciais para montar  matrizes de quantização eficientes.
 	
 #### 2º Passo	
 > Aplicamos as funções DCT (equação 5) aos blocos dimensionados e obtemos os coeficientes da DCT.
