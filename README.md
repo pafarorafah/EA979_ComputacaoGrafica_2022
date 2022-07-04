@@ -54,6 +54,36 @@ A compressão JPEG é baseada no algoritmo DCT (Discrete Cosine Transform), que 
   
 > $P(i,j)$ são funções-base, ou primitivas, da DCT:
   
+ ![](data/images/DCT-8x8.png)
+  
+ > $F(i,j)$ corresponde às quantidades de cada função primitiva que devem ser combinadas para obter o bloco original da imagem.
+ 
+  > A DCT é uma função separável, independente na horizontal e na vertical e por isso pode ser feita sequencialmente através do produto matricial (Equação 5) :
+  
+  $$DCT = C \ x \ B \ x \ C^T $$    
+  
+  > Onde $B$ é um bloco de 8x8 pixels da imagem original e $C$ é uma matriz de transformação igual a:
+  - Se i = 0, $\ C_{i,j} = {1  \over 2\sqrt{2N}}  $
+  - Se 0 $\ \leq \$ i $\ \leq \$ 7, $\ C_{i,j} = {1  \over 2}cos({(2j+1)i\pi) \over 16})  $
+  
+  > $C_{i,j} = $
+  
+  
+			      [ .354 	.354    .354    .354    .354     .354     .354     .354	]
+			      [	.490 	.416    .278    .098   -.098    -.278   -.416    -.490	]
+			      [	.462 	.191   -.191   -.462    -.462    -.191    .191    .462	]
+                          [ .416   -.098   -.490   -.278     .278      .490    .098   -.416	]
+		              [ .354   -.354   -.354    .354     .354     -.354   -.354    .354	]
+			      [	.278   -.490    .098    .416    -.416     -.098    .490   -.278	]
+			      [	.191   -.462    .462   -.191    -.191      .462   -.462    .191	]
+			      [	.098   -.278    .416   -.490     .490     -.416    .278   -.098	]
+  
+  
+  
+  
+  
+  
+  
 ### Referências Bibliográficas
 > http://www.dpi.inpe.br/~carlos/Academicos/Cursos/Pdi/SemPerdas.htm
 > http://computacaografica.ic.uff.br/transparenciasvol2cap8.pdf
