@@ -26,7 +26,7 @@ A compressão JPEG é baseada no algoritmo DCT (Discrete Cosine Transform), que 
  
  > Essa “perda” de qualidade é calculada, e ocorre nas componentes em que a visão humana peca (luminância e crominância), por isso que caso a imagem seja RGB ela primeiramente é convertida para YCbCr ou YUV.
   
- > Pode ser usada tanto para compressão com perda quanto sem perda. Para compressão com perda utilizaremos o DCT e uma matriz de quantização para remover as altas frequências do sinal (pouco perceptíveis aos olhos humanos), depois usaremos a entropia para recuperar a imagem. Já no método sem perda utilizaremos também uma modularização delta para explorar correlações entre blocos vizinhos da imagem.
+ > Pode ser usada tanto para compressão com perda quanto sem perda. Para compressão com perda utilizaremos o DCT e uma matriz de quantização para remover as altas frequências do sinal (pouco perceptíveis aos olhos humanos), depois usaremos a entropia para recuperar a imagem. Já no método sem perda a matriz de quantização será trocada por uma máscara.
   
 >  O algoritmo é baseado na técnica Discrete Cosine Transform, proposta por Nasir Ahmed em 1972. Até os dias de hoje, JPEG é o método de compressão mais utilizado para imagens digitais.
   
