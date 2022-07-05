@@ -10,7 +10,7 @@ from funcoesBasicas import FixImageRange, openImage, \
 import os
  
  #Abro a imagem
-img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste9.png')
+img = openImage(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.png')
 
 #Matriz de teste 1
 M2 = [
@@ -51,10 +51,10 @@ exampleImage = [
 #Reshape na imagem para multiplo de 8x8
 newImage = reshapeImage(np.array(img))
 newImage2 = Image.fromarray(newImage)
-cv2.imwrite(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste9.jpg', newImage)
+cv2.imwrite(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.jpg', newImage)
 #Salvo imagem e a mostro na tela para comparação
 newImage2.show()
-#newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste9.jpg')
+#newImage2.save(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.jpg')
 #newImage = np.array(exampleImage)
 
 #Calculo compressão DCT
@@ -85,33 +85,16 @@ print("Decompressed lossless")
 imdecompressedLossless = Image.fromarray(decompressedImageLossless.astype(np.uint8))
 imdecompressedLossless.show()
 
-cv2.imwrite('imagemLossLessDaCertoPF.jpg',decompressedImageLossless)
-cv2.imwrite('imagemDCT.jpg',decompressedImage)
+cv2.imwrite(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemLossLess.jpg',decompressedImageLossless)
+cv2.imwrite(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemDCT.jpg',decompressedImage)
 
-file_size0 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste9.jpg')
-file_size1 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\src\imagemLossLessDaCertoPF.jpg')
-file_size2 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\src\imagemDCT.jpg')
+file_size0 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\imagemteste12.jpg')
+file_size1 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemLossLess.jpg')
+file_size2 = os.path.getsize(r'C:\Users\Nathan\Documents\EA979 - 2022\EA979_ComputacaoGrafica_2022\data\images\ImagensComprimidas\imagemDCT.jpg')
 
 print("File Size Not Compressed is :", file_size0, "bytes")
 print("File Size Compressed is :", file_size2, "bytes")
 print("File Size Lossless Compressed is :", file_size1, "bytes")
-
-#Verifico tamanho em bytes das imagens(DCT, LDCT e Original)
-img_file = BytesIO()
-imdecompressed.save(img_file, 'jpeg')
-img_file_size_jpeg = img_file.tell()
-print(f'size = {img_file_size_jpeg}')
-
-img_file = BytesIO()
-imdecompressedLossless.save(img_file, 'jpeg')
-img_file_size_jpeg = img_file.tell()
-print(f'size = {img_file_size_jpeg}')
-
-img_file = BytesIO()
-newImage3 = Image.fromarray(newImage)
-newImage3.save(img_file, 'jpeg')
-img_file_size_jpeg = img_file.tell()
-print(f'size = {img_file_size_jpeg}')
 
 #Obtenho imagens da diferença e as exibo para ver quais pontos ficaram diferentes
 difference1 = abs(newImage - decompressedImage)
